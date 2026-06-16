@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/arikanatakan/oee-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/arikanatakan/oee-mcp/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/oee-mcp?v=3)](https://pypi.org/project/oee-mcp/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An MCP server that exposes [oee](https://github.com/arikanatakan/oee), the
 Overall Equipment Effectiveness library for Python, as tools for AI agents: give
