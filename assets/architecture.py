@@ -58,9 +58,11 @@ ax.add_patch(FancyBboxPatch((27, 32), 44, 51,
 ax.text(49, 79, "oee-mcp server  (stdio)", ha="center", fontsize=9.5, color=MUT,
         fontweight="bold")
 box(49, 64, 40, 16,
-    "Analysis tools  (5)\ncompute_oee · oee_from_log · oee_from_factors\n"
-    "aggregate_oee · describe_inputs",
-    ANA_F, ANA_E, fs=7.7)
+    "Analysis tools  (9)\n"
+    "compute_oee · oee_from_log · oee_from_factors · aggregate_oee\n"
+    "reliability · rolled_throughput_yield · capacity\n"
+    "loss_value · describe_inputs",
+    ANA_F, ANA_E, fs=7.0)
 box(49, 44, 40, 14,
     "Chart tools  (3)\nwaterfall_chart · loss_pareto_chart\ntrend_chart",
     OPT_F, OPT_E, fs=7.7)
