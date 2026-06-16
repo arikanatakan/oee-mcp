@@ -28,6 +28,10 @@ mcp.tool(annotations=_annotations("Compute OEE"))(_tools.compute_oee)
 mcp.tool(annotations=_annotations("OEE from an event log"))(_tools.oee_from_log)
 mcp.tool(annotations=_annotations("OEE from the three factors"))(_tools.oee_from_factors)
 mcp.tool(annotations=_annotations("Aggregate OEE across machines"))(_tools.aggregate_oee)
+mcp.tool(annotations=_annotations("Reliability (MTBF, MTTR, availability)"))(_tools.reliability)
+mcp.tool(annotations=_annotations("Rolled throughput yield"))(_tools.rolled_throughput_yield)
+mcp.tool(annotations=_annotations("Capacity (takt time, required rate)"))(_tools.capacity)
+mcp.tool(annotations=_annotations("Loss valuation (units and money)"))(_tools.loss_value)
 mcp.tool(annotations=_annotations("Describe the inputs"))(_tools.describe_inputs)
 
 

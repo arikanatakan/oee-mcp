@@ -28,6 +28,12 @@ DEFINITIONS = [
     "Quality = good count / total count",
     "OEE = Availability x Performance x Quality",
     "TEEP = OEE x utilization, with utilization = planned production time / all time",
+    "OOE measured over operating time (planned production time + planned "
+    "downtime), so OOE <= OEE",
+    "MTBF = operating time / failures; MTTR = total repair time / failures; "
+    "inherent availability = MTBF / (MTBF + MTTR)",
+    "Rolled throughput yield = product of the per-step first pass yields",
+    "Takt time = available time / demand (the pace needed to meet demand)",
     "World-class OEE >= 85% (availability >= 90%, performance >= 95%, "
     "quality >= 99.9%) [Nakajima, 1988]",
 ]
@@ -56,6 +62,10 @@ class MachineInput(BaseModel):
     reject_count: float | None = Field(default=None, description="Rejected pieces.")
     all_time: float | None = Field(
         default=None, description="Total calendar time, for TEEP and utilization.")
+    planned_downtime: float | None = Field(
+        default=None,
+        description="Planned-stop time (maintenance, changeover); if given, the "
+        "result also reports OOE, measured over operating time.")
     setup_time: float | None = Field(
         default=None,
         description="Planned-stop time within downtime; splits availability into "
@@ -85,10 +95,21 @@ class DowntimeEvent(BaseModel):
     planned: bool = Field(default=False, description="True for planned stops (setup, changeover).")
 
 
+class YieldStep(BaseModel):
+    """One step of a multi-step line, by counts or by a yield."""
+
+    good: float | None = Field(default=None, description="Good (first-time-right) units; with total.")
+    total: float | None = Field(default=None, description="Units into the step; with good.")
+    value: float | None = Field(default=None, description="The step yield between 0 and 1, instead of good/total.")
+
+
 def _payload(result) -> dict:
     out = result.to_dict()
     out["summary"] = result.summary()
     return out
+
+
+_metric = _payload
 
 
 def _result(machine: MachineInput):
@@ -162,6 +183,56 @@ def describe_inputs() -> dict:
         "definitions": DEFINITIONS,
         "six_big_losses": SIX_BIG_LOSSES,
     }
+
+
+def reliability(operating_time: float, failures: float | None = None,
+                repair_times: list[float] | None = None,
+                total_repair_time: float | None = None,
+                name: str | None = None) -> dict:
+    """MTBF, MTTR and inherent availability (the maintenance drivers of OEE
+    availability). Give repair_times, or failures and total_repair_time."""
+    try:
+        return _metric(oee.reliability(
+            operating_time, failures=int(failures) if failures is not None else None,
+            repair_times=repair_times, total_repair_time=total_repair_time, name=name))
+    except (ValueError, TypeError) as exc:
+        return {"error": str(exc)}
+
+
+def rolled_throughput_yield(steps: list[YieldStep], name: str | None = None) -> dict:
+    """Rolled throughput yield across steps (the product of the step yields)."""
+    converted: list = []
+    for step in steps:
+        if step.good is not None and step.total is not None:
+            converted.append({"good": step.good, "total": step.total})
+        elif step.value is not None:
+            converted.append(step.value)
+        else:
+            return {"error": "each step needs good and total, or a yield value"}
+    try:
+        return _metric(oee.rolled_throughput_yield(converted, name=name))
+    except (ValueError, TypeError) as exc:
+        return {"error": str(exc)}
+
+
+def capacity(available_time: float, demand: float, cycle_time: float | None = None,
+             name: str | None = None) -> dict:
+    """Takt time and the required rate; with a cycle time, whether it keeps up."""
+    try:
+        return _metric(oee.capacity(available_time, demand, cycle_time=cycle_time,
+                                    name=name))
+    except (ValueError, TypeError) as exc:
+        return {"error": str(exc)}
+
+
+def loss_value(machine: MachineInput, value_per_unit: float | None = None,
+               name: str | None = None) -> dict:
+    """The availability, performance and quality losses as lost units and money."""
+    try:
+        return _metric(oee.loss_value(_result(machine), value_per_unit=value_per_unit,
+                                      name=name))
+    except (ValueError, TypeError) as exc:
+        return {"error": str(exc), "hint": "call describe_inputs for the fields and units"}
 
 
 def waterfall_png(machine: MachineInput) -> bytes:

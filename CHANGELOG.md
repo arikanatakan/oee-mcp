@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project uses
 [semantic versioning](https://semver.org/).
 
+## [0.2.0] - 2026-06-16
+
+### Added
+
+- Tools for the metric family in oee 0.2.0: `reliability` (MTBF, MTTR, inherent
+  availability), `rolled_throughput_yield`, `capacity` (takt time and the
+  required rate) and `loss_value` (the losses as lost units and money).
+- `compute_oee` now also reports OOE when `planned_downtime` is given.
+
+### Changed
+
+- Requires `oee[plot] >= 0.2.0`.
+
 ## [0.1.0] - 2026-06-16
 
 First release.

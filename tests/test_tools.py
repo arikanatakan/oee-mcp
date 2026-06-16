@@ -3,7 +3,7 @@ import json
 import pytest
 
 from oee_mcp import _tools as t
-from oee_mcp._tools import DowntimeEvent, MachineInput, ProductionRun
+from oee_mcp._tools import DowntimeEvent, MachineInput, ProductionRun, YieldStep
 
 
 def _vorne():
@@ -57,6 +57,42 @@ def test_describe_inputs():
 
 def test_payload_is_json_serializable():
     json.dumps(t.compute_oee(_vorne()))
+
+
+def test_compute_oee_reports_ooe():
+    r = t.compute_oee(MachineInput(
+        planned_production_time=420, downtime=47, ideal_rate=60,
+        total_count=19271, reject_count=423, all_time=480, planned_downtime=33))
+    f = r["factors"]
+    assert f["ooe"] is not None
+    assert f["teep"] <= f["ooe"] <= f["oee"]
+
+
+def test_reliability_tool():
+    r = t.reliability(1000, failures=5, total_repair_time=50)
+    assert r["mtbf"] == pytest.approx(200)
+    assert r["availability"] == pytest.approx(1000 / 1050)
+
+
+def test_rolled_throughput_yield_tool():
+    r = t.rolled_throughput_yield([YieldStep(value=0.99), YieldStep(value=0.98)])
+    assert r["rty"] == pytest.approx(0.99 * 0.98)
+    r2 = t.rolled_throughput_yield([YieldStep(good=95, total=100)])
+    assert r2["step_yields"][0] == pytest.approx(0.95)
+
+
+def test_capacity_tool():
+    r = t.capacity(480, 240, cycle_time=1.5)
+    assert r["takt_time"] == pytest.approx(2.0)
+    assert r["meets_demand"] is True
+
+
+def test_loss_value_tool():
+    r = t.loss_value(MachineInput(
+        planned_production_time=480, downtime=80, ideal_cycle_time=0.5,
+        total_count=700, reject_count=100), value_per_unit=10)
+    assert r["lost_units"]["total"] == pytest.approx(360)
+    assert r["lost_value"]["total"] == pytest.approx(3600)
 
 
 def test_charts_return_png_bytes():

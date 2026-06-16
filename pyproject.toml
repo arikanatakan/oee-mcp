@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oee-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP server for oee: Overall Equipment Effectiveness, the six big losses and charts for AI agents."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Atakan Arikan" }]
 requires-python = ">=3.10"
-dependencies = ["oee[plot]>=0.1.2", "mcp>=1.0"]
+dependencies = ["oee[plot]>=0.2.0", "mcp>=1.0"]
 keywords = [
     "mcp", "model-context-protocol", "ai-agents", "oee",
     "overall-equipment-effectiveness", "manufacturing", "tpm", "teep",

@@ -27,11 +27,15 @@ waterfall, the six big losses, TEEP, alerts and provenance.
 
 | Tool | Purpose |
 | ---- | ------- |
-| `compute_oee` | OEE, the waterfall and the six big losses from times and counts |
+| `compute_oee` | OEE, OOE and TEEP, the waterfall and the six big losses from times and counts |
 | `oee_from_log` | OEE from an event log of production runs and downtime events |
 | `oee_from_factors` | OEE from availability, performance and quality directly |
 | `aggregate_oee` | roll OEE up across machines or shifts correctly (sums the buckets, never averages) |
-| `describe_inputs` | the input fields, units and OEE definitions |
+| `reliability` | MTBF, MTTR and inherent availability |
+| `rolled_throughput_yield` | the multi-step quality view (the product of the step yields) |
+| `capacity` | takt time, the required rate, and whether a cycle time keeps up |
+| `loss_value` | the availability, performance and quality losses as lost units and money |
+| `describe_inputs` | the input fields, units and the metric definitions |
 
 **Chart tools** return a PNG image.
 

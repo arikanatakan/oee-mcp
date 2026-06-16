@@ -13,6 +13,7 @@ def test_all_tools_registered():
     names = {tool.name for tool in asyncio.run(server.mcp.list_tools())}
     expected = {
         "compute_oee", "oee_from_log", "oee_from_factors", "aggregate_oee",
+        "reliability", "rolled_throughput_yield", "capacity", "loss_value",
         "describe_inputs", "waterfall_chart", "loss_pareto_chart", "trend_chart",
     }
     assert expected <= names
