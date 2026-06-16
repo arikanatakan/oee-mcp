@@ -18,6 +18,8 @@ silently. The calculation belongs in a deterministic, versioned, validated
 library that the agent calls, which leaves the agent to choose the analysis and
 explain the result.
 
+![oee-mcp architecture: an AI agent calls the server's analysis and chart tools, which route to the validated oee core and return structured JSON or a PNG chart](assets/architecture.png)
+
 ## Tools
 
 **Analysis tools** return the library's payload: the factors, the time
